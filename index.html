@@ -179,12 +179,12 @@
 <button id="to-top" type="button" aria-label="맨 위로" title="맨 위로"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg></button>
 <script>
 // =====================================================================
-// 설정 (기존 문제은행과 같은 Supabase 프로젝트·같은 허용코드)
+// 설정 (기존 문제은행과 같은 Supabase 프로젝트, 입장 코드는 모의고사 전용 mock_allowed_codes)
 // =====================================================================
 const SUPABASE_URL = "https://jqycexlruwaosumitoyz.supabase.co";
 const SUPABASE_KEY = "sb_publishable_nmdXzyt-7nGIKsCPPkjDYQ_AsMsn-M4";
 const IMAGE_BASE = `${SUPABASE_URL}/storage/v1/object/public/mock-images/`;
-const CODE_STORAGE_KEY = "qb_code";      // 기존 사이트와 같은 키 → 한 번 입장하면 두 사이트 모두 자동 입장
+const CODE_STORAGE_KEY = "mock_code";    // 기출 사이트(qb_code)와 따로 저장 → 입장 코드가 서로 달라도 섞이지 않음
 const PAGE_SIZE = 30;
 const CIRCLED = ["①", "②", "③", "④", "⑤"];
 const ORGS = [
@@ -247,7 +247,7 @@ async function login(code, silent) {
   $("login-btn").disabled = true;
   $("login-error").textContent = silent ? "" : "확인 중...";
   try {
-    const ok = await rpc("verify_code", { p_code: code });
+    const ok = await rpc("mock_verify_code", { p_code: code });
     if (ok !== true) { storeDel(); $("login-error").textContent = silent ? "" : "허용되지 않은 코드입니다."; return; }
     const [catalog, my] = await Promise.all([rpc("mock_get_catalog", { p_code: code }), rpc("mock_get_my_state", { p_code: code })]);
     S.code = code;
